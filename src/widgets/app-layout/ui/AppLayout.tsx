@@ -1,6 +1,6 @@
 import "./AppLayout.css";
-import HomePage from "../../../pages/home/ui/HomePage";
 import { useState } from "react";
+import { NavLink, Outlet } from "react-router";
 
 const AppLayout = () => {
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -13,21 +13,46 @@ const AppLayout = () => {
                     <span>CineGrid</span>
                 </div>
                 <nav className="app-layout__navigation">
-                    <a
-                        className="app-layout__link app-layout__link--active"
-                        href="#"
+                    <NavLink
+                        className={({ isActive }) =>
+                            isActive
+                                ? "app-layout__link app-layout__link--active"
+                                : "app-layout__link"
+                        }
+                        to="/"
                     >
                         <span>Home</span>
-                    </a>
-                    <a className="app-layout__link" href="#">
+                    </NavLink>
+                    <NavLink
+                        className={({ isActive }) =>
+                            isActive
+                                ? "app-layout__link app-layout__link--active"
+                                : "app-layout__link"
+                        }
+                        to="/discover"
+                    >
                         <span>Discover</span>
-                    </a>
-                    <a className="app-layout__link" href="#">
+                    </NavLink>
+                    <NavLink
+                        className={({ isActive }) =>
+                            isActive
+                                ? "app-layout__link app-layout__link--active"
+                                : "app-layout__link"
+                        }
+                        to="/library"
+                    >
                         <span>My Library</span>
-                    </a>
-                    <a className="app-layout__link" href="#">
+                    </NavLink>
+                    <NavLink
+                        className={({ isActive }) =>
+                            isActive
+                                ? "app-layout__link app-layout__link--active"
+                                : "app-layout__link"
+                        }
+                        to="/watchlist"
+                    >
                         <span>Watchlist</span>
-                    </a>
+                    </NavLink>
                 </nav>
             </aside>
 
@@ -57,7 +82,7 @@ const AppLayout = () => {
                 </header>
 
                 <main className="app-layout__content">
-                    <HomePage searchQuery={searchQuery} />
+                    <Outlet context={searchQuery} />
                 </main>
             </div>
         </div>
