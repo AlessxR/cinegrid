@@ -8,6 +8,10 @@ interface IMovie {
     posterUrl: string;
 }
 
+interface MovieGridProps {
+    searchQuery: string;
+}
+
 const movies: IMovie[] = [
     {
         title: "Interstellar",
@@ -32,10 +36,12 @@ const movies: IMovie[] = [
     },
 ];
 
-const MovieGrid = () => {
+const MovieGrid = ({ searchQuery }: MovieGridProps) => {
     return (
         <section className='movie-grid'>
-            {movies.map((movie) => (
+            {movies.filter((movie) => {
+                return movie.title.toLowerCase().includes(searchQuery.toLowerCase());
+            }).map((movie) => (
                 <MovieCard
                     key={movie.title}
                     title={movie.title}

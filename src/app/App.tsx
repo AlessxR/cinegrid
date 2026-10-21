@@ -1,8 +1,8 @@
 import "../App.css";
-import HomePage from "../pages/home/ui/HomePage";
+import AppLayout from "../widgets/app-layout/ui/AppLayout";
 
 function App() {
-    return <HomePage />;
+    return <AppLayout />;
 }
 
 export default App;
