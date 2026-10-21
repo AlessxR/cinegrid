@@ -34,6 +34,48 @@ const movies: IMovie[] = [
         posterUrl:
             "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
     },
+    {
+        title: "The Shawshank Redemption",
+        year: 1994,
+        rating: 9.3,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg",
+    },
+    {
+        title: "Pulp Fiction",
+        year: 1994,
+        rating: 8.9,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/vQWk5YBFWF4bZaofAbv0tShwBvQ.jpg",
+    },
+    {
+        title: "The Matrix",
+        year: 1999,
+        rating: 8.7,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg",
+    },
+    {
+        title: "Fight Club",
+        year: 1999,
+        rating: 8.8,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/bptfVGEQuv6vDTIMVCHjJ9Dz8PX.jpg",
+    },
+    {
+        title: "Parasite",
+        year: 2019,
+        rating: 8.5,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg",
+    },
+    {
+        title: "Whiplash",
+        year: 2014,
+        rating: 8.5,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/7fn624j5lj3xTme2SgiLCeN8k6I.jpg",
+    },
 ];
 
 const MovieGrid = ({ searchQuery }: MovieGridProps) => {

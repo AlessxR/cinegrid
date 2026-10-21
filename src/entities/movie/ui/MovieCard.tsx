@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./MovieCard.css";
 
 interface Movie {
@@ -8,15 +9,27 @@ interface Movie {
 }
 
 const MovieCard = ({ title, year, rating, posterUrl }: Movie) => {
+    const [imageError, setImageError] = useState<boolean>(false);
+
     return (
         <article className="movie-card">
             <div className="movie-card__poster-wrapper">
-                <img
-                    className="movie-card__poster"
-                    src={posterUrl}
-                    alt={`${title} poster`}
-                    loading="lazy"
-                />
+                {imageError ? (
+                    <div className="movie-card__poster-fallback">
+                        <span>🎬</span>
+                        <p>{title}</p>
+                    </div>
+                ) : (
+                    <img
+                        className="movie-card__poster"
+                        src={posterUrl}
+                        alt={`${title} poster`}
+                        loading="lazy"
+                        onError={() => {
+                            setImageError(true);
+                        }}
+                    />
+                )}
 
                 <span className="movie-card__rating">★ {rating}</span>
             </div>
