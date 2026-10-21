@@ -1,6 +1,14 @@
-import "./AppLayout.css";
 import { useState } from "react";
 import { NavLink, Outlet } from "react-router";
+
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
+import ExploreRoundedIcon from "@mui/icons-material/ExploreRounded";
+import MovieRoundedIcon from "@mui/icons-material/MovieRounded";
+import BookmarkRoundedIcon from "@mui/icons-material/BookmarkRounded";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+
+import "./AppLayout.css";
+import { InputAdornment, TextField } from "@mui/material";
 
 const AppLayout = () => {
     const [searchQuery, setSearchQuery] = useState<string>("");
@@ -20,7 +28,9 @@ const AppLayout = () => {
                                 : "app-layout__link"
                         }
                         to="/"
+                        end
                     >
+                        <HomeRoundedIcon />
                         <span>Home</span>
                     </NavLink>
                     <NavLink
@@ -31,6 +41,7 @@ const AppLayout = () => {
                         }
                         to="/discover"
                     >
+                        <ExploreRoundedIcon />
                         <span>Discover</span>
                     </NavLink>
                     <NavLink
@@ -41,6 +52,7 @@ const AppLayout = () => {
                         }
                         to="/library"
                     >
+                        <MovieRoundedIcon />
                         <span>My Library</span>
                     </NavLink>
                     <NavLink
@@ -51,6 +63,7 @@ const AppLayout = () => {
                         }
                         to="/watchlist"
                     >
+                        <BookmarkRoundedIcon />
                         <span>Watchlist</span>
                     </NavLink>
                 </nav>
@@ -58,19 +71,34 @@ const AppLayout = () => {
 
             <div className="app-layout__main">
                 <header className="app-layout__header">
-                    <div className="app-layout__search">
-                        <span className="app-layout__search-icon">⌕</span>
-                        <input
-                            type="search"
-                            value={searchQuery}
-                            onChange={(event) =>
-                                setSearchQuery(event.target.value)
-                            }
-                            placeholder="Search movies and TV shows..."
-                            aria-label="Search movies and TV shows"
-                        />
-                        <kbd>⌘ K</kbd>
-                    </div>
+                    <TextField
+                        className="app-layout__search"
+                        type="search"
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                        placeholder="Search movies and TV shows..."
+                        aria-label="Search movies and TV shows"
+                        size="small"
+                        fullWidth
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchRoundedIcon />
+                                    </InputAdornment>
+                                ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <kbd>⌘ K</kbd>
+                                    </InputAdornment>
+                                ),
+                            },
+                        }}
+                    >
+                        <span className="app-layout__search-icon">
+                            <SearchRoundedIcon />
+                        </span>
+                    </TextField>
 
                     <button
                         className="app-layout__profile"

@@ -74,3 +74,123 @@
     font-size: 14px;
     line-height: 1.6;
 }
+
+.movie-grid__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.movie-grid__results-label {
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+.movie-grid__sort {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+.movie-grid__sort-select {
+    max-width: 190px;
+    padding: 9px 32px 9px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+.movie-grid__sort-select:hover {
+    border-color: var(--color-accent);
+}
+
+.movie-grid__sort-select:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+}
+
+.movie-grid__sort-select option {
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+@media (max-width: 520px) {
+    .movie-grid__toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .movie-grid__sort {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .movie-grid__sort-select {
+        flex: 1;
+        max-width: 220px;
+    }
+}
+
+.movie-grid__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.movie-grid__results-label {
+    color: var(--color-text-muted);
+    font-size: 13px;
+}
+
+.movie-grid__sort {
+    width: 190px;
+}
+
+.movie-grid__sort .MuiOutlinedInput-root {
+    border-radius: 10px;
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.movie-grid__sort .MuiOutlinedInput-notchedOutline {
+    border-color: var(--color-border);
+}
+
+.movie-grid__sort
+    .MuiOutlinedInput-root:hover
+    .MuiOutlinedInput-notchedOutline {
+    border-color: var(--color-accent);
+}
+
+.movie-grid__sort
+    .MuiOutlinedInput-root.Mui-focused
+    .MuiOutlinedInput-notchedOutline {
+    border-color: var(--color-accent);
+}
+
+.movie-grid__sort .MuiInputLabel-root.Mui-focused {
+    color: var(--color-accent);
+}
+
+@media (max-width: 520px) {
+    .movie-grid__toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .movie-grid__sort {
+        width: 100%;
+        max-width: 260px;
+    }
+}

@@ -113,6 +113,7 @@
 
 .app-layout__link {
     display: flex;
+    gap: 12px;
     align-items: center;
     min-height: 44px;
     padding: 0 14px;
@@ -125,6 +126,12 @@
         color 160ms ease,
         background 160ms ease,
         border-color 160ms ease;
+}
+
+.app-layout__link svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
 }
 
 .app-layout__link:hover {
@@ -157,9 +164,15 @@
     }
 
     .app-layout__link {
-        justify-content: center;
-        padding-inline: 4px;
-        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .app-layout__link svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
     }
 }
 
@@ -175,11 +188,15 @@
     }
 
     .app-layout__link {
-        flex: 1;
-        min-height: 44px;
-        justify-content: center;
-        padding-inline: 4px;
-        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .app-layout__link svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
     }
 }
 
@@ -280,4 +297,47 @@
     .app-layout__search kbd {
         display: none;
     }
+}
+
+.app-layout__search {
+    flex: 1;
+    max-width: 520px;
+}
+
+.app-layout__search .MuiOutlinedInput-root {
+    min-height: 44px;
+    border-radius: 12px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: background var(--transition-fast);
+}
+
+.app-layout__search .MuiOutlinedInput-root:hover {
+    background: var(--color-surface-hover);
+}
+
+.app-layout__search .MuiOutlinedInput-notchedOutline {
+    border-color: var(--color-border);
+}
+
+.app-layout__search
+    .MuiOutlinedInput-root:hover
+    .MuiOutlinedInput-notchedOutline {
+    border-color: var(--color-accent);
+}
+
+.app-layout__search
+    .MuiOutlinedInput-root.Mui-focused
+    .MuiOutlinedInput-notchedOutline {
+    border-color: var(--color-accent);
+    border-width: 1px;
+}
+
+.app-layout__search .MuiInputAdornment-root {
+    color: var(--color-text-muted);
+}
+
+.app-layout__search input::placeholder {
+    color: var(--color-text-muted);
+    opacity: 1;
 }
