@@ -1,4 +1,4 @@
-import './MovieGrid.css';
+import "./MovieGrid.css";
 import MovieCard from "../../../entities/movie/ui/MovieCard";
 
 interface IMovie {
@@ -25,23 +25,41 @@ const movies: IMovie[] = [
         year: 2010,
         rating: 8.8,
         posterUrl:
-            "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+            "https://image.tmdb.org/t/p/w500/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg",
     },
     {
         title: "The Dark Knight",
         year: 2008,
         rating: 9.0,
         posterUrl:
-            "https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+            "https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
     },
 ];
 
 const MovieGrid = ({ searchQuery }: MovieGridProps) => {
+    const filteredMovies = movies.filter((movie) => {
+        return movie.title
+            .toLowerCase()
+            .includes(searchQuery.trim().toLowerCase());
+    });
+
+    if (filteredMovies.length === 0) {
+        return (
+            <section className="movie-grid__empty">
+                <span className="movie-grid__empty-icon" aria-hidden="true">
+                    ⌕
+                </span>
+
+                <h2>No movies found</h2>
+
+                <p>Try another title or check your spelling.</p>
+            </section>
+        );
+    }
+
     return (
-        <section className='movie-grid'>
-            {movies.filter((movie) => {
-                return movie.title.toLowerCase().includes(searchQuery.toLowerCase());
-            }).map((movie) => (
+        <section className="movie-grid">
+            {filteredMovies.map((movie) => (
                 <MovieCard
                     key={movie.title}
                     title={movie.title}
