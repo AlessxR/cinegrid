@@ -1,11 +1,8 @@
 import "../App.css";
+import HomePage from "../pages/home/ui/HomePage";
 
 function App() {
-    return (
-        <>
-            <h1>CineGrid</h1>
-        </>
-    );
+    return <HomePage />;
 }
 
 export default App;
