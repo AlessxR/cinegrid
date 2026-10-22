@@ -3,13 +3,39 @@ import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider
 import { movies, tvShows } from "../../../entities/movie/model/mockMovies";
 import "./LibraryPage.css";
 import MovieCard from "../../../entities/movie/ui/MovieCard";
+import { useState } from "react";
+import type { IMovie } from "../../../entities/movie/model/types";
+
+type Filters = "all" | "watched" | "wantToWatch";
 
 const LibraryPage = () => {
-    const { watched } = useWatchlist();
+    const { watched, watchlist } = useWatchlist();
     const allTitles = [...movies, ...tvShows];
+
     const watchedItems = allTitles.filter((movie) =>
         watched.includes(movie.id),
     );
+
+    const watchlistItems = allTitles.filter((movie) =>
+        watchlist.includes(movie.id),
+    );
+
+    const [filter, setFilter] = useState<Filters>("all");
+
+    let displayedItems: IMovie[] = allTitles;
+
+    switch (filter) {
+        case "all":
+            displayedItems = allTitles;
+            break;
+        case "watched":
+            displayedItems = watchedItems;
+            break;
+        case "wantToWatch":
+            displayedItems = watchlistItems;
+            break;
+        default:
+    }
 
     return (
         <div className="library-page">
@@ -26,22 +52,41 @@ const LibraryPage = () => {
 
             <div className="library-page__filters">
                 <button
-                    className="library-page__filter library-page__filter--active"
+                    className={`library-page__filter ${
+                        filter === "all" ? "library-page__filter--active" : ""
+                    }`}
                     type="button"
+                    onClick={() => setFilter("all")}
                 >
                     All movies
                 </button>
 
-                <button className="library-page__filter" type="button">
+                <button
+                    onClick={() => setFilter("watched")}
+                    className={`library-page__filter ${
+                        filter === "watched"
+                            ? "library-page__filter--active"
+                            : ""
+                    }`}
+                    type="button"
+                >
                     Watched
                 </button>
 
-                <button className="library-page__filter" type="button">
+                <button
+                    onClick={() => setFilter("wantToWatch")}
+                    className={`library-page__filter ${
+                        filter === "wantToWatch"
+                            ? "library-page__filter--active"
+                            : ""
+                    }`}
+                    type="button"
+                >
                     Want to watch
                 </button>
             </div>
 
-            {watchedItems.length === 0 ? (
+            {displayedItems.length === 0 ? (
                 <div className="library-page__empty">
                     <div className="library-page__empty-icon">🎬</div>
 
@@ -61,7 +106,7 @@ const LibraryPage = () => {
                         gap: 3,
                     }}
                 >
-                    {watchedItems.map((item) => (
+                    {displayedItems.map((item) => (
                         <MovieCard
                             id={item.id}
                             posterUrl={item.posterUrl}
