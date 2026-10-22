@@ -1,9 +1,14 @@
 import { useOutletContext } from "react-router";
 import MovieGrid from "../../../widgets/movie-grid/ui/MovieGrid";
 import "./DiscoverPage.css";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { useState } from "react";
+
+type ContentType = 'movies' | 'tv';
 
 const DiscoverPage = () => {
     const searchQuery = useOutletContext<string>();
+    const [contentType, setContentType] = useState<ContentType>('movies');
 
     return (
         <div className="discover-page">
@@ -14,6 +19,19 @@ const DiscoverPage = () => {
                     </span>
 
                     <h1>Discover</h1>
+                    <ToggleButtonGroup
+                        value={contentType}
+                        exclusive
+                        onChange={(event, newValue) => {
+                            if (newValue !== null) {
+                                setContentType(newValue);
+                            }
+                        }}
+                        aria-label="Content type"
+                    >
+                        <ToggleButton value="movies">Movies</ToggleButton>
+                        <ToggleButton value="tv">TV Shows</ToggleButton>
+                    </ToggleButtonGroup>
 
                     <p>Explore movies and find your next favorite story.</p>
                 </div>
@@ -31,7 +49,7 @@ const DiscoverPage = () => {
                     </div>
                 </div>
 
-                <MovieGrid searchQuery={searchQuery} />
+                <MovieGrid contentType={contentType} searchQuery={searchQuery} />
             </section>
         </div>
     );

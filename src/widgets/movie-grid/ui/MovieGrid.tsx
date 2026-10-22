@@ -3,6 +3,9 @@ import MovieCard from "../../../entities/movie/ui/MovieCard";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useState } from "react";
 
+type SortOption = "popular" | "rating" | "newest" | "title";
+type ContentType = "movies" | "tv";
+
 interface IMovie {
     title: string;
     year: number;
@@ -12,9 +15,8 @@ interface IMovie {
 
 interface MovieGridProps {
     searchQuery: string;
+    contentType: ContentType;
 }
-
-type SortOption = "popular" | "rating" | "newest" | "title";
 
 const movies: IMovie[] = [
     {
@@ -82,11 +84,72 @@ const movies: IMovie[] = [
     },
 ];
 
-const MovieGrid = ({ searchQuery }: MovieGridProps) => {
+const tvShows: IMovie[] = [
+    {
+        title: "Breaking Bad",
+        year: 2008,
+        rating: 9.5,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/ztkUQFLlC19CCMYHW9o1zWhJRNq.jpg",
+    },
+    {
+        title: "Game of Thrones",
+        year: 2011,
+        rating: 9.2,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/1XS1oqL89opfnbLl8WnZY1O1uJx.jpg",
+    },
+    {
+        title: "Stranger Things",
+        year: 2016,
+        rating: 8.6,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/49WJfeN0moxb9IPfGn8AIqMGskD.jpg",
+    },
+    {
+        title: "The Office",
+        year: 2005,
+        rating: 8.6,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/qWnJzyZ5e7Wp2p2G2hD9Z3z6Z5b.jpg",
+    },
+    {
+        title: "Sherlock",
+        year: 2010,
+        rating: 9.1,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/7WTsnHkbA0FaG6R9twfFde0I9hl.jpg",
+    },
+    {
+        title: "The Last of Us",
+        year: 2023,
+        rating: 8.7,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/dmo6TYuuJgaYinXBPjrgG9mB5od.jpg",
+    },
+    {
+        title: "Dark",
+        year: 2017,
+        rating: 8.7,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/apbrbWs8M9lyOpJYU5WXrpFbk1Z.jpg",
+    },
+    {
+        title: "Chernobyl",
+        year: 2019,
+        rating: 9.3,
+        posterUrl:
+            "https://image.tmdb.org/t/p/w500/hlLXt2tOPT6RRnjiUmoxyG1LTFi.jpg",
+    },
+];
+
+const MovieGrid = ({ searchQuery, contentType }: MovieGridProps) => {
     const [sortOption, setSortOption] = useState<SortOption>("popular");
     let sortMovies: IMovie[] = [];
 
-    const filteredMovies = movies.filter((movie) => {
+    const currentItems = contentType === "movies" ? movies : tvShows;
+
+    const filteredMovies = currentItems.filter((movie) => {
         return movie.title
             .toLowerCase()
             .includes(searchQuery.trim().toLowerCase());
