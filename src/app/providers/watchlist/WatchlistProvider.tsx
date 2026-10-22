@@ -15,11 +15,17 @@ interface WatchlistProviderProps {
 interface WatchlistContextType {
     watchlist: string[];
     setWatchlist: Dispatch<SetStateAction<string[]>>;
+
+    watched: string[];
+    setWatched: Dispatch<SetStateAction<string[]>>;
 }
 
 const WatchlistContext = createContext<WatchlistContextType>({
     watchlist: [],
     setWatchlist: () => {},
+
+    watched: [],
+    setWatched: () => {},
 });
 
 const WatchlistProvider = ({ children }: WatchlistProviderProps) => {
@@ -36,12 +42,27 @@ const WatchlistProvider = ({ children }: WatchlistProviderProps) => {
         }
     });
 
+    const [watched, setWatched] = useState<string[]>(() => {
+        try {
+            const cinegridWatched = localStorage.getItem("cinegrid-watched");
+
+            if (!cinegridWatched) return [];
+            return JSON.parse(cinegridWatched);
+        } catch (e) {
+            console.error(e);
+            return [];
+        }
+    });
+
     useEffect(() => {
         localStorage.setItem("cinegrid-watchlist", JSON.stringify(watchlist));
-    }, [watchlist]);
+        localStorage.setItem("cinegrid-watched", JSON.stringify(watched));
+    }, [watchlist, watched]);
 
     return (
-        <WatchlistContext.Provider value={{ watchlist, setWatchlist }}>
+        <WatchlistContext.Provider
+            value={{ watchlist, setWatchlist, watched, setWatched }}
+        >
             {children}
         </WatchlistContext.Provider>
     );

@@ -12,17 +12,26 @@ interface Movie {
 }
 
 const MovieCard = ({ id, title, year, rating, posterUrl }: Movie) => {
-    const { watchlist, setWatchlist } = useWatchlist();
+    const { watchlist, setWatchlist, watched, setWatched } = useWatchlist();
 
     const [imageError, setImageError] = useState<boolean>(false);
 
     const isInWatchlist = watchlist.includes(id);
+    const isInWatched = watched.includes(id);
 
     const handleWatchlistToggle = () => {
         if (!isInWatchlist) {
             setWatchlist([...watchlist, id]);
         } else {
             setWatchlist(watchlist.filter((movie) => movie !== id));
+        }
+    };
+
+    const handleWatchedToggle = () => {
+        if (!isInWatched) {
+            setWatched([...watched, id]);
+        } else {
+            setWatched(watched.filter((movie) => movie !== id));
         }
     };
 
@@ -62,6 +71,15 @@ const MovieCard = ({ id, title, year, rating, posterUrl }: Movie) => {
                     {isInWatchlist
                         ? "Remove from Watchlist"
                         : "Add to Watchlist"}
+                </Button>
+                <Button
+                    variant="outlined"
+                    fullWidth
+                    size="small"
+                    color={isInWatched ? "error" : "primary"}
+                    onClick={handleWatchedToggle}
+                >
+                    {isInWatched ? "Mask as Unwatched" : "Mark as Watched"}
                 </Button>
             </div>
         </article>
