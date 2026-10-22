@@ -181,7 +181,9 @@ const MovieGrid = ({ searchQuery, contentType }: MovieGridProps) => {
                     ⌕
                 </span>
 
-                <h2>No movies found</h2>
+                <h2>
+                    No {contentType === "movies" ? "movies" : "TV shows"} found
+                </h2>
 
                 <p>Try another title or check your spelling.</p>
             </section>

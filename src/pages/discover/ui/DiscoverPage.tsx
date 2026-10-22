@@ -4,11 +4,11 @@ import "./DiscoverPage.css";
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { useState } from "react";
 
-type ContentType = 'movies' | 'tv';
+type ContentType = "movies" | "tv";
 
 const DiscoverPage = () => {
     const searchQuery = useOutletContext<string>();
-    const [contentType, setContentType] = useState<ContentType>('movies');
+    const [contentType, setContentType] = useState<ContentType>("movies");
 
     return (
         <div className="discover-page">
@@ -44,12 +44,17 @@ const DiscoverPage = () => {
                         <p>
                             {searchQuery.trim()
                                 ? `Search results for "${searchQuery.trim()}"`
-                                : "Handpicked movies to get you started"}
+                                : contentType === "movies"
+                                  ? "Handpicked movies to get you started"
+                                  : "Handpicked series to get you started"}
                         </p>
                     </div>
                 </div>
 
-                <MovieGrid contentType={contentType} searchQuery={searchQuery} />
+                <MovieGrid
+                    contentType={contentType}
+                    searchQuery={searchQuery}
+                />
             </section>
         </div>
     );
