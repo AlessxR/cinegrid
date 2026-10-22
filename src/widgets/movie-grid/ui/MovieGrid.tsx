@@ -2,7 +2,7 @@ import "./MovieGrid.css";
 import MovieCard from "../../../entities/movie/ui/MovieCard";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { useState } from "react";
-import { movies, tvShows } from "../../../entities/movie/model/mockMovies";
+import { tvShows } from "../../../entities/movie/model/mockMovies";
 import type { IMovie } from "../../../entities/movie/model/types";
 
 type SortOption = "popular" | "rating" | "newest" | "title";
@@ -11,9 +11,10 @@ type ContentType = "movies" | "tv";
 interface MovieGridProps {
     searchQuery: string;
     contentType: ContentType;
+    movies: IMovie[];
 }
 
-const MovieGrid = ({ searchQuery, contentType }: MovieGridProps) => {
+const MovieGrid = ({ searchQuery, contentType, movies }: MovieGridProps) => {
     const [sortOption, setSortOption] = useState<SortOption>("popular");
     let sortMovies: IMovie[] = [];
 

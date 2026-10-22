@@ -1,14 +1,47 @@
 import { useOutletContext } from "react-router";
 import MovieGrid from "../../../widgets/movie-grid/ui/MovieGrid";
 import "./DiscoverPage.css";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
-import { useState } from "react";
+import {
+    Alert,
+    CircularProgress,
+    ToggleButton,
+    ToggleButtonGroup,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import type { IMovie } from "../../../entities/movie/model/types";
+import { getPopularMovies } from "../../../entities/movie/api/getPopularMovies";
 
 type ContentType = "movies" | "tv";
 
 const DiscoverPage = () => {
     const searchQuery = useOutletContext<string>();
     const [contentType, setContentType] = useState<ContentType>("movies");
+    const [movies, setMovies] = useState<IMovie[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isError, setIsError] = useState<null | string>(null);
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            setIsError(null);
+            setIsLoading(true);
+
+            try {
+                const moviesByAPI = await getPopularMovies();
+                setMovies(moviesByAPI);
+            } catch (err) {
+                if (err instanceof Error) {
+                    setIsError(err.message);
+                }
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchMovies();
+    }, []);
+
+    if (isLoading) return <CircularProgress />;
+    if (isError) return <Alert severity="error">{isError}</Alert>;
 
     return (
         <div className="discover-page">
@@ -52,6 +85,7 @@ const DiscoverPage = () => {
                 </div>
 
                 <MovieGrid
+                    movies={movies}
                     contentType={contentType}
                     searchQuery={searchQuery}
                 />
