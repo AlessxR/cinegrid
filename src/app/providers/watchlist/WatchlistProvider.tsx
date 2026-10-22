@@ -5,6 +5,7 @@ import {
     type Dispatch,
     type SetStateAction,
     useContext,
+    useEffect,
 } from "react";
 
 interface WatchlistProviderProps {
@@ -22,7 +23,22 @@ const WatchlistContext = createContext<WatchlistContextType>({
 });
 
 const WatchlistProvider = ({ children }: WatchlistProviderProps) => {
-    const [watchlist, setWatchlist] = useState<string[]>([]);
+    const [watchlist, setWatchlist] = useState<string[]>(() => {
+        try {
+            const cinegridWatchlist =
+                localStorage.getItem("cinegrid-watchlist");
+
+            if (!cinegridWatchlist) return [];
+            return JSON.parse(cinegridWatchlist);
+        } catch (e) {
+            console.error(e);
+            return [];
+        }
+    });
+
+    useEffect(() => {
+        localStorage.setItem("cinegrid-watchlist", JSON.stringify(watchlist));
+    }, [watchlist]);
 
     return (
         <WatchlistContext.Provider value={{ watchlist, setWatchlist }}>
