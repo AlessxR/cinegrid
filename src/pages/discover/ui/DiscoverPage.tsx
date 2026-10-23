@@ -10,38 +10,59 @@ import {
 import { useEffect, useState } from "react";
 import type { IMovie } from "../../../entities/movie/model/types";
 import { getPopularMovies } from "../../../entities/movie/api/getPopularMovies";
+import { searchMovies as searchMoviesRequest } from "../../../entities/movie/api/searchMovie";
 
 type ContentType = "movies" | "tv";
 
 const DiscoverPage = () => {
     const searchQuery = useOutletContext<string>();
+
     const [contentType, setContentType] = useState<ContentType>("movies");
     const [movies, setMovies] = useState<IMovie[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isError, setIsError] = useState<null | string>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isError, setIsError] = useState<string | null>(null);
 
     useEffect(() => {
+        let isCurrent = true;
+
         const fetchMovies = async () => {
-            setIsError(null);
             setIsLoading(true);
+            setIsError(null);
 
             try {
-                const moviesByAPI = await getPopularMovies();
-                setMovies(moviesByAPI);
+                const query = searchQuery.trim();
+
+                const results = query
+                    ? await searchMoviesRequest(query)
+                    : await getPopularMovies();
+
+                if (isCurrent) {
+                    setMovies(results);
+                }
             } catch (err) {
-                if (err instanceof Error) {
-                    setIsError(err.message);
+                if (isCurrent) {
+                    setIsError(
+                        err instanceof Error
+                            ? err.message
+                            : "Failed to load movies.",
+                    );
                 }
             } finally {
-                setIsLoading(false);
+                if (isCurrent) {
+                    setIsLoading(false);
+                }
             }
         };
 
-        fetchMovies();
-    }, []);
+        const debounce = setTimeout(() => {
+            void fetchMovies();
+        }, 400);
 
-    if (isLoading) return <CircularProgress />;
-    if (isError) return <Alert severity="error">{isError}</Alert>;
+        return () => {
+            isCurrent = false;
+            clearTimeout(debounce);
+        };
+    }, [searchQuery]);
 
     return (
         <div className="discover-page">
@@ -52,10 +73,11 @@ const DiscoverPage = () => {
                     </span>
 
                     <h1>Discover</h1>
+
                     <ToggleButtonGroup
                         value={contentType}
                         exclusive
-                        onChange={(event, newValue) => {
+                        onChange={(_, newValue: ContentType | null) => {
                             if (newValue !== null) {
                                 setContentType(newValue);
                             }
@@ -84,11 +106,19 @@ const DiscoverPage = () => {
                     </div>
                 </div>
 
-                <MovieGrid
-                    movies={movies}
-                    contentType={contentType}
-                    searchQuery={searchQuery}
-                />
+                {isLoading ? (
+                    <div className="discover-page__loading">
+                        <CircularProgress />
+                    </div>
+                ) : isError ? (
+                    <Alert severity="error">{isError}</Alert>
+                ) : (
+                    <MovieGrid
+                        movies={movies}
+                        contentType={contentType}
+                        searchQuery={searchQuery}
+                    />
+                )}
             </section>
         </div>
     );
