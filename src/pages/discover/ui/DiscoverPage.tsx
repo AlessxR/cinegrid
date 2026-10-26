@@ -11,6 +11,8 @@ import { useEffect, useState } from "react";
 import type { IMovie } from "../../../entities/movie/model/types";
 import { getPopularMovies } from "../../../entities/movie/api/getPopularMovies";
 import { searchMovies as searchMoviesRequest } from "../../../entities/movie/api/searchMovie";
+import { searchTv } from "../../../entities/movie/api/searchTvShows";
+import { getPopularTv } from "../../../entities/movie/api/getPopularTVShows";
 
 type ContentType = "movies" | "tv";
 
@@ -32,9 +34,14 @@ const DiscoverPage = () => {
             try {
                 const query = searchQuery.trim();
 
-                const results = query
-                    ? await searchMoviesRequest(query)
-                    : await getPopularMovies();
+                const results =
+                    contentType === "movies"
+                        ? query
+                            ? await searchMoviesRequest(query)
+                            : await getPopularMovies()
+                        : query
+                          ? await searchTv(query)
+                          : await getPopularTv();
 
                 if (isCurrent) {
                     setMovies(results);
@@ -62,7 +69,7 @@ const DiscoverPage = () => {
             isCurrent = false;
             clearTimeout(debounce);
         };
-    }, [searchQuery]);
+    }, [searchQuery, contentType]);
 
     return (
         <div className="discover-page">
@@ -115,6 +122,7 @@ const DiscoverPage = () => {
                 ) : (
                     <MovieGrid
                         movies={movies}
+                        
                         contentType={contentType}
                         searchQuery={searchQuery}
                     />
