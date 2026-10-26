@@ -60,6 +60,9 @@ const MovieGrid = ({ searchQuery, contentType, movies }: MovieGridProps) => {
         );
     }
 
+    console.log("contentType:", contentType);
+    console.log("movies:", movies);
+
     return (
         <>
             <div className="movie-grid__toolbar">
@@ -97,6 +100,7 @@ const MovieGrid = ({ searchQuery, contentType, movies }: MovieGridProps) => {
                         year={movie.year}
                         rating={movie.rating}
                         posterUrl={movie.posterUrl}
+                        type={contentType === "movies" ? "movie" : "tv"}
                     />
                 ))}
             </section>

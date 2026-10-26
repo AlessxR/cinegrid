@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./MovieCard.css";
 import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
 import { Button, Stack } from "@mui/material";
+import { useNavigate } from "react-router";
 
 interface Movie {
     id: string;
@@ -9,34 +10,44 @@ interface Movie {
     year: number;
     rating: number;
     posterUrl: string;
+    type: "movie" | "tv";
 }
 
-const MovieCard = ({ id, title, year, rating, posterUrl }: Movie) => {
+const MovieCard = ({ id, title, year, rating, posterUrl, type }: Movie) => {
+    const navigate = useNavigate();
     const { watchlist, setWatchlist, watched, setWatched } = useWatchlist();
 
     const [imageError, setImageError] = useState<boolean>(false);
 
-    const isInWatchlist = watchlist.includes(id);
-    const isInWatched = watched.includes(id);
+    const mediaId = `${type}:${id}`;
+
+    const isInWatchlist = watchlist.includes(mediaId);
+    const isInWatched = watched.includes(mediaId);
 
     const handleWatchlistToggle = () => {
         if (!isInWatchlist) {
-            setWatchlist([...watchlist, id]);
+            setWatchlist([...watchlist, mediaId]);
         } else {
-            setWatchlist(watchlist.filter((movie) => movie !== id));
+            setWatchlist(watchlist.filter((movie) => movie !== mediaId));
         }
     };
 
     const handleWatchedToggle = () => {
         if (!isInWatched) {
-            setWatched([...watched, id]);
+            setWatched([...watched, mediaId]);
         } else {
-            setWatched(watched.filter((movie) => movie !== id));
+            setWatched(watched.filter((movie) => movie !== mediaId));
         }
     };
 
+    const handleCardClick = () => {
+        const path = type === "movie" ? "movie" : "tv";
+
+        navigate(`/${path}/${id}`);
+    };
+
     return (
-        <article className="movie-card">
+        <article className="movie-card" onClick={handleCardClick}>
             <div className="movie-card__poster-wrapper">
                 {imageError ? (
                     <div className="movie-card__poster-fallback">
@@ -61,28 +72,33 @@ const MovieCard = ({ id, title, year, rating, posterUrl }: Movie) => {
             <div className="movie-card__content">
                 <h3 className="movie-card__title">{title}</h3>
                 <p className="movie-card__year">{year}</p>
-                <Stack direction='column' spacing={1}>
+                <Stack direction="column" spacing={1}>
                     <Button
-                    
-                    variant="contained"
-                    fullWidth
-                    size="small"
-                    color={isInWatchlist ? "error" : "primary"}
-                    onClick={handleWatchlistToggle}
-                >
-                    {isInWatchlist
-                        ? "Remove from Watchlist"
-                        : "Add to Watchlist"}
-                </Button>
-                <Button
-                    variant="outlined"
-                    fullWidth
-                    size="small"
-                    color={isInWatched ? "error" : "primary"}
-                    onClick={handleWatchedToggle}
-                >
-                    {isInWatched ? "Mask as Unwatched" : "Mark as Watched"}
-                </Button>
+                        variant="contained"
+                        fullWidth
+                        size="small"
+                        color={isInWatchlist ? "error" : "primary"}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            handleWatchlistToggle();
+                        }}
+                    >
+                        {isInWatchlist
+                            ? "Remove from Watchlist"
+                            : "Add to Watchlist"}
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        fullWidth
+                        size="small"
+                        color={isInWatched ? "error" : "primary"}
+                        onClick={(event) => {
+                            event.stopPropagation();
+                            handleWatchedToggle();
+                        }}
+                    >
+                        {isInWatched ? "Mask as Unwatched" : "Mark as Watched"}
+                    </Button>
                 </Stack>
             </div>
         </article>
