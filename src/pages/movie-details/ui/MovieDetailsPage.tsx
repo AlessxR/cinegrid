@@ -1,14 +1,29 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
     getMovieDetails,
     type MovieDetails,
 } from "../../../entities/movie/api/getMovieDetails";
-import { Alert, Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+    Alert,
+    Box,
+    Button,
+    Chip,
+    CircularProgress,
+    Typography,
+} from "@mui/material";
 import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
+import {
+    ArrowBack,
+    BookmarkAdd,
+    BookmarkAdded,
+    CheckCircle,
+    RadioButtonUnchecked,
+} from "@mui/icons-material";
 
 const MovieDetailsPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const [data, setData] = useState<MovieDetails | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState<string | null>(null);
@@ -83,6 +98,20 @@ const MovieDetailsPage = () => {
                         "linear-gradient(90deg, rgba(15,17,22,0.98) 0%, rgba(15,17,22,0.85) 45%, rgba(15,17,22,0.35) 100%), linear-gradient(0deg, rgba(15,17,22,0.8), transparent)",
                 }}
             />
+            <Button
+                startIcon={<ArrowBack />}
+                onClick={() => navigate("/discover")}
+                sx={{
+                    position: "absolute",
+                    top: 16,
+                    left: 16,
+                    color: "#fff",
+                    textTransform: "none",
+                    zIndex: 2,
+                }}
+            >
+                Back to Discover
+            </Button>
 
             <Box
                 sx={{
@@ -97,23 +126,21 @@ const MovieDetailsPage = () => {
                     flexWrap: { xs: "wrap", md: "nowrap" },
                 }}
             >
-                <Box
-                    component="img"
-                    src={
-                        data.poster_path
-                            ? `https://image.tmdb.org/t/p/w500${data.poster_path}`
-                            : undefined
-                    }
-                    alt={data.title}
-                    sx={{
-                        width: { xs: 150, sm: 190, md: 250 },
-                        aspectRatio: "2 / 3",
-                        objectFit: "cover",
-                        borderRadius: 3,
-                        boxShadow: "0 12px 40px rgba(0,0,0,0.5)",
-                        flexShrink: 0,
-                    }}
-                />
+                {data.poster_path ? (
+                    <Box
+                        component="img"
+                        src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
+                        alt={data.title}
+                        sx={{
+                            width: { xs: 150, sm: 190, md: 250 },
+                            aspectRatio: "2 / 3",
+                            objectFit: "cover",
+                            borderRadius: 3,
+                            boxShadow: "0 12px 40px rgba(0,0,0,0.5)",
+                            flexShrink: 0,
+                        }}
+                    />
+                ) : null}
 
                 <Box sx={{ maxWidth: 700 }}>
                     <Typography
@@ -149,6 +176,28 @@ const MovieDetailsPage = () => {
                         </Typography>
                     </Box>
 
+                    <Box
+                        sx={{
+                            display: "flex",
+                            gap: 1,
+                            flexWrap: "wrap",
+                            mb: 3,
+                        }}
+                    >
+                        {data.genres.map((genre) => (
+                            <Chip
+                                key={genre.id}
+                                label={genre.name}
+                                variant="outlined"
+                                sx={{
+                                    color: "#fff",
+                                    borderColor: "rgba(255,255,255,0.35)",
+                                    backgroundColor: "rgba(255,255,255,0.06)",
+                                }}
+                            />
+                        ))}
+                    </Box>
+
                     <Typography variant="h6" sx={{ fontWeight: 600, mb: 1.5 }}>
                         Overview
                     </Typography>
@@ -173,20 +222,56 @@ const MovieDetailsPage = () => {
                     >
                         <Button
                             variant="contained"
+                            startIcon={
+                                isInWatchlist ? (
+                                    <BookmarkAdded />
+                                ) : (
+                                    <BookmarkAdd />
+                                )
+                            }
                             onClick={handleWatchlistToggle}
+                            sx={{
+                                textTransform: "none",
+                                fontWeight: 600,
+                                backgroundColor: isInWatchlist
+                                    ? "#2e7d32"
+                                    : "#7c4dff",
+                                "&:hover": {
+                                    backgroundColor: isInWatchlist
+                                        ? "#256428"
+                                        : "#6939e8",
+                                },
+                            }}
                         >
                             {isInWatchlist
-                                ? "Remove from Watchlist"
+                                ? "In Watchlist"
                                 : "Add to Watchlist"}
                         </Button>
 
                         <Button
                             variant="outlined"
+                            startIcon={
+                                isWatched ? (
+                                    <CheckCircle />
+                                ) : (
+                                    <RadioButtonUnchecked />
+                                )
+                            }
                             onClick={handleWatchedToggle}
+                            sx={{
+                                textTransform: "none",
+                                fontWeight: 600,
+                                color: isWatched ? "#81c784" : "#fff",
+                                borderColor: isWatched
+                                    ? "#4caf50"
+                                    : "rgba(255,255,255,0.35)",
+                                "&:hover": {
+                                    borderColor: "#81c784",
+                                    backgroundColor: "rgba(76,175,80,0.08)",
+                                },
+                            }}
                         >
-                            {isWatched
-                                ? "Mark as Unwatched"
-                                : "Mark as Watched"}
+                            {isWatched ? "Watched" : "Mark as Watched"}
                         </Button>
                     </Box>
                 </Box>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./MovieCard.css";
 import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
-import { Button } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 
 interface Movie {
     id: string;
@@ -61,7 +61,9 @@ const MovieCard = ({ id, title, year, rating, posterUrl }: Movie) => {
             <div className="movie-card__content">
                 <h3 className="movie-card__title">{title}</h3>
                 <p className="movie-card__year">{year}</p>
-                <Button
+                <Stack direction='column' spacing={1}>
+                    <Button
+                    
                     variant="contained"
                     fullWidth
                     size="small"
@@ -81,6 +83,7 @@ const MovieCard = ({ id, title, year, rating, posterUrl }: Movie) => {
                 >
                     {isInWatched ? "Mask as Unwatched" : "Mark as Watched"}
                 </Button>
+                </Stack>
             </div>
         </article>
     );
