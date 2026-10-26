@@ -8,6 +8,7 @@ import { Alert, CircularProgress } from "@mui/material";
 import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
 import type { MediaHeroData } from "../../../entities/media/model/types";
 import MediaHero from "../../../entities/media/ui/MediaHero";
+import type { ISavedMedia } from "../../../entities/movie/model/types";
 
 const MovieDetailsPage = () => {
     const { id } = useParams();
@@ -19,24 +20,13 @@ const MovieDetailsPage = () => {
     const { watchlist, setWatchlist, watched, setWatched } = useWatchlist();
     const movieId = data ? String(data.id) : "";
 
-    const isInWatchlist = watchlist.includes(movieId);
-    const isWatched = watched.includes(movieId);
+    const isInWatchlist = watchlist.some(
+        (item) => item.id === movieId && item.type === "movie",
+    );
 
-    const handleWatchlistToggle = () => {
-        setWatchlist((prev) =>
-            isInWatchlist
-                ? prev.filter((item) => item !== movieId)
-                : [...prev, movieId],
-        );
-    };
-
-    const handleWatchedToggle = () => {
-        setWatched((prev) =>
-            isWatched
-                ? prev.filter((item) => item !== movieId)
-                : [...prev, movieId],
-        );
-    };
+    const isWatched = watched.some(
+        (item) => item.id === movieId && item.type === "movie",
+    );
 
     useEffect(() => {
         const fetchDetailsPage = async () => {
@@ -62,6 +52,43 @@ const MovieDetailsPage = () => {
     if (isLoading) return <CircularProgress />;
     if (isError) return <Alert severity="error">{isError}</Alert>;
     if (data === null) return <h2>Movie not found.</h2>;
+
+    const media: ISavedMedia = {
+        id: String(data.id),
+        title: data.title,
+        year: Number(data.release_date.slice(0, 4)),
+        rating: data.vote_average,
+        posterUrl: data.poster_path
+            ? "https://image.tmdb.org/t/p/w500".concat(data.poster_path)
+            : "",
+        type: "movie",
+    };
+
+    const handleWatchlistToggle = () => {
+        setWatchlist((prev) => {
+            if (isInWatchlist) {
+                return prev.filter(
+                    (movie) =>
+                        !(movie.id === media.id && movie.type === "movie"),
+                );
+            }
+
+            return [...prev, media];
+        });
+    };
+
+    const handleWatchedToggle = () => {
+        setWatched((prev) => {
+            if (isWatched) {
+                return prev.filter(
+                    (movie) =>
+                        !(movie.id === media.id && movie.type === "movie"),
+                );
+            } else {
+                return [...prev, media];
+            }
+        });
+    };
 
     const heroData: MediaHeroData = {
         id: data.id,
