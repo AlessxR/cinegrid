@@ -34,14 +34,22 @@ const DiscoverPage = () => {
             try {
                 const query = searchQuery.trim();
 
-                const results =
-                    contentType === "movies"
-                        ? query
-                            ? await searchMoviesRequest(query)
-                            : await getPopularMovies()
-                        : query
-                          ? await searchTv(query)
-                          : await getPopularTv();
+                let results: IMovie[];
+
+                if (contentType === "movies") {
+                    if (query) {
+                        results = await searchMoviesRequest(query);
+                    } else {
+                        const result = await getPopularMovies();
+                        results = result.movies;
+                    }
+                } else {
+                    if (query) {
+                        results = await searchTv(query);
+                    } else {
+                        results = await getPopularTv();
+                    }
+                }
 
                 if (isCurrent) {
                     setMovies(results);
@@ -122,7 +130,6 @@ const DiscoverPage = () => {
                 ) : (
                     <MovieGrid
                         movies={movies}
-                        
                         contentType={contentType}
                         searchQuery={searchQuery}
                     />

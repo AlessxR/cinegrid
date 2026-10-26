@@ -15,8 +15,22 @@ export type TmdbResponse = {
     total_results: number;
 };
 
-export const getPopularMovies = async (): Promise<IMovie[]> => {
-    const popularMovies = await tmdbFetch("movie/popular");
+type PopularMoviesResult = {
+    movies: IMovie[];
+    page: number;
+    totalPages: number;
+};
 
-    return popularMovies.results.map(mapTmdbMovie);
+export const getPopularMovies = async (
+    page: number = 1,
+): Promise<PopularMoviesResult> => {
+    const popularMovies = await tmdbFetch<TmdbResponse>("movie/popular", {
+        page,
+    });
+
+    return {
+        movies: popularMovies.results.map(mapTmdbMovie),
+        page: popularMovies.page,
+        totalPages: popularMovies.total_pages,
+    };
 };
