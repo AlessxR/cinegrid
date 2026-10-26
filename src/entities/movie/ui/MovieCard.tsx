@@ -40,17 +40,25 @@ const MovieCard = ({ id, title, year, rating, posterUrl, type }: Movie) => {
     const handleWatchlistToggle = () => {
         setWatchlist((prev) => {
             if (isInWatchlist) {
-                return 
+                return prev.filter(
+                    (movie) => !(movie.id === id && movie.type === type),
+                );
             }
+
+            return [...prev, media];
         });
     };
 
     const handleWatchedToggle = () => {
-        if (!isInWatched) {
-            setWatched([...watched, mediaId]);
-        } else {
-            setWatched(watched.filter((movie) => movie !== mediaId));
-        }
+        setWatched((prev) => {
+            if (isInWatched) {
+                return prev.filter(
+                    (movie) => !(movie.id === id && movie.type === type),
+                );
+            } else {
+                return [...prev, media];
+            }
+        });
     };
 
     const handleCardClick = () => {

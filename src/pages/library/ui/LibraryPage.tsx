@@ -1,43 +1,35 @@
 import { Box } from "@mui/material";
 import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
-import { movies, tvShows } from "../../../entities/movie/model/mockMovies";
 import "./LibraryPage.css";
 import MovieCard from "../../../entities/movie/ui/MovieCard";
 import { useState } from "react";
-import type { IMovie } from "../../../entities/movie/model/types";
+import type { ISavedMedia } from "../../../entities/movie/model/types";
 
 type Filters = "all" | "watched" | "wantToWatch";
 
-type LibraryItems = IMovie & { type: "movie" | "tv" };
-
 const LibraryPage = () => {
     const { watched, watchlist } = useWatchlist();
-    const allTitles = [
-        ...movies.map((item) => ({ ...item, type: "movie" as const })),
-        ...tvShows.map((item) => ({ ...item, type: "tv" as const })),
-    ];
-
-    const watchedItems = allTitles.filter((item) =>
-        watched.includes(`${item.type}:${item.id}`),
-    );
-
-    const watchlistItems = allTitles.filter((movie) =>
-        watchlist.includes(`${movie.type}:${movie.id}`),
-    );
 
     const [filter, setFilter] = useState<Filters>("all");
 
-    let displayedItems: LibraryItems[] = allTitles;
+    const allItems = [...watched, ...watchlist].filter(
+        (media, index, items) =>
+            items.findIndex(
+                (item) => item.id === media.id && item.type === media.type,
+            ) === index,
+    );
+
+    let displayedItems: ISavedMedia[] = allItems;
 
     switch (filter) {
         case "all":
-            displayedItems = allTitles;
+            displayedItems = allItems;
             break;
         case "watched":
-            displayedItems = watchedItems;
+            displayedItems = watched;
             break;
         case "wantToWatch":
-            displayedItems = watchlistItems;
+            displayedItems = watchlist;
             break;
         default:
     }
@@ -51,7 +43,7 @@ const LibraryPage = () => {
                 </div>
 
                 <span className="library-page__count">
-                    {watchedItems.length} movies
+                    {displayedItems.length} movies
                 </span>
             </div>
 
@@ -118,7 +110,7 @@ const LibraryPage = () => {
                             rating={item.rating}
                             title={item.title}
                             year={item.year}
-                            key={item.id}
+                            key={`${item.type}:${item.id}`}
                             type={item.type}
                         />
                     ))}
