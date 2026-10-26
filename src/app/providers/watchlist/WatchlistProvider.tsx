@@ -29,6 +29,29 @@ const WatchlistContext = createContext<WatchlistContextType>({
     setWatched: () => {},
 });
 
+const isSavedMediaArray = (value: unknown): value is ISavedMedia[] => {
+    if (!Array.isArray(value)) {
+        return false;
+    }
+
+    return value.every((el) => {
+        if (typeof el !== "object" || el === null) {
+            return false;
+        }
+
+        const item = el as Record<string, unknown>;
+
+        return (
+            typeof item.id === "string" &&
+            typeof item.title === "string" &&
+            typeof item.year === "number" &&
+            typeof item.rating === "number" &&
+            typeof item.posterUrl === "string" &&
+            (item.type === "movie" || item.type === "tv")
+        );
+    });
+};
+
 const WatchlistProvider = ({ children }: WatchlistProviderProps) => {
     const [watchlist, setWatchlist] = useState<ISavedMedia[]>(() => {
         try {
@@ -36,7 +59,13 @@ const WatchlistProvider = ({ children }: WatchlistProviderProps) => {
                 localStorage.getItem("cinegrid-watchlist");
 
             if (!cinegridWatchlist) return [];
-            return JSON.parse(cinegridWatchlist);
+            const parsedCinegridWatchlist = JSON.parse(cinegridWatchlist);
+
+            if (isSavedMediaArray(parsedCinegridWatchlist)) {
+                return parsedCinegridWatchlist;
+            } else {
+                return [];
+            }
         } catch (e) {
             console.error(e);
             return [];
@@ -48,7 +77,12 @@ const WatchlistProvider = ({ children }: WatchlistProviderProps) => {
             const cinegridWatched = localStorage.getItem("cinegrid-watched");
 
             if (!cinegridWatched) return [];
-            return JSON.parse(cinegridWatched);
+            const parsedCinegridWatched = JSON.parse(cinegridWatched);
+            if (isSavedMediaArray(parsedCinegridWatched)) {
+                return parsedCinegridWatched;
+            } else {
+                return [];
+            }
         } catch (e) {
             console.error(e);
             return [];
