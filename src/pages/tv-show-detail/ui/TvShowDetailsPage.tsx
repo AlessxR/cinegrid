@@ -8,6 +8,7 @@ import type { MediaHeroData } from "../../../entities/media/model/types";
 import { Alert, CircularProgress } from "@mui/material";
 import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
 import MediaHero from "../../../entities/media/ui/MediaHero";
+import type { ISavedMedia } from "../../../entities/movie/model/types";
 
 const TvShowDetailsPage = () => {
     const { id } = useParams();
@@ -19,10 +20,15 @@ const TvShowDetailsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState<null | string>(null);
 
-    const tvShowId = data ? `tv:${data.id}` : "";
+    const tvShowId = data ? `${data.id}` : "";
 
-    const isInWatchlist = watchlist.includes(tvShowId);
-    const isWatched = watched.includes(tvShowId);
+    const isInWatchlist = watchlist.some(
+        (item) => item.id === tvShowId && item.type === "tv",
+    );
+
+    const isWatched = watched.some(
+        (item) => item.id === tvShowId && item.type === "tv",
+    );
 
     useEffect(() => {
         const fetchTvShowDetails = async () => {
@@ -45,25 +51,44 @@ const TvShowDetailsPage = () => {
         void fetchTvShowDetails();
     }, [id]);
 
-    const handleWatchlistToggle = () => {
-        setWatchlist((prev) =>
-            isInWatchlist
-                ? prev.filter((item) => item !== tvShowId)
-                : [...prev, tvShowId],
-        );
-    };
-
-    const handleWatchedToggle = () => {
-        setWatched((prev) =>
-            isWatched
-                ? prev.filter((item) => item !== tvShowId)
-                : [...prev, tvShowId],
-        );
-    };
-
     if (isLoading) return <CircularProgress />;
     if (isError) return <Alert severity="error">{isError}</Alert>;
     if (data === null) return <h2>TV show not found.</h2>;
+
+    const media: ISavedMedia = {
+        id: String(data.id),
+        title: data.name,
+        year: Number(data.first_air_date.slice(0, 4)),
+        rating: data.vote_average,
+        posterUrl: data.poster_path
+            ? "https://image.tmdb.org/t/p/w500".concat(data.poster_path)
+            : "",
+        type: "tv",
+    };
+
+    const handleWatchlistToggle = () => {
+        setWatchlist((prev) => {
+            if (isInWatchlist) {
+                return prev.filter(
+                    (movie) => !(movie.id === media.id && movie.type === "tv"),
+                );
+            }
+
+            return [...prev, media];
+        });
+    };
+
+    const handleWatchedToggle = () => {
+        setWatched((prev) => {
+            if (isWatched) {
+                return prev.filter(
+                    (movie) => !(movie.id === media.id && movie.type === "tv"),
+                );
+            } else {
+                return [...prev, media];
+            }
+        });
+    };
 
     const heroData: MediaHeroData = {
         id: data.id,
