@@ -7,17 +7,18 @@ import {
     useContext,
     useEffect,
 } from "react";
+import type { ISavedMedia } from "../../../entities/movie/model/types";
 
 interface WatchlistProviderProps {
     children: ReactNode;
 }
 
 interface WatchlistContextType {
-    watchlist: string[];
-    setWatchlist: Dispatch<SetStateAction<string[]>>;
+    watchlist: ISavedMedia[];
+    setWatchlist: Dispatch<SetStateAction<ISavedMedia[]>>;
 
-    watched: string[];
-    setWatched: Dispatch<SetStateAction<string[]>>;
+    watched: ISavedMedia[];
+    setWatched: Dispatch<SetStateAction<ISavedMedia[]>>;
 }
 
 const WatchlistContext = createContext<WatchlistContextType>({
@@ -29,7 +30,7 @@ const WatchlistContext = createContext<WatchlistContextType>({
 });
 
 const WatchlistProvider = ({ children }: WatchlistProviderProps) => {
-    const [watchlist, setWatchlist] = useState<string[]>(() => {
+    const [watchlist, setWatchlist] = useState<ISavedMedia[]>(() => {
         try {
             const cinegridWatchlist =
                 localStorage.getItem("cinegrid-watchlist");
@@ -42,7 +43,7 @@ const WatchlistProvider = ({ children }: WatchlistProviderProps) => {
         }
     });
 
-    const [watched, setWatched] = useState<string[]>(() => {
+    const [watched, setWatched] = useState<ISavedMedia[]>(() => {
         try {
             const cinegridWatched = localStorage.getItem("cinegrid-watched");
 

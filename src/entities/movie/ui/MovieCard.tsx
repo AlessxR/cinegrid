@@ -3,6 +3,7 @@ import "./MovieCard.css";
 import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
 import { Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router";
+import type { ISavedMedia } from "../model/types";
 
 interface Movie {
     id: string;
@@ -19,17 +20,29 @@ const MovieCard = ({ id, title, year, rating, posterUrl, type }: Movie) => {
 
     const [imageError, setImageError] = useState<boolean>(false);
 
-    const mediaId = `${type}:${id}`;
+    const media: ISavedMedia = {
+        id,
+        title,
+        year,
+        rating,
+        posterUrl,
+        type,
+    };
 
-    const isInWatchlist = watchlist.includes(mediaId);
-    const isInWatched = watched.includes(mediaId);
+    const isInWatchlist = watchlist.some(
+        (item) => item.id === id && item.type === type,
+    );
+
+    const isInWatched = watched.some(
+        (item) => item.id === id && item.type === type,
+    );
 
     const handleWatchlistToggle = () => {
-        if (!isInWatchlist) {
-            setWatchlist([...watchlist, mediaId]);
-        } else {
-            setWatchlist(watchlist.filter((movie) => movie !== mediaId));
-        }
+        setWatchlist((prev) => {
+            if (isInWatchlist) {
+                return 
+            }
+        });
     };
 
     const handleWatchedToggle = () => {

@@ -16,4 +16,8 @@ export type MediaDetails = {
         id: number;
         name: string;
     }[];
+};
+
+export interface ISavedMedia extends IMovie {
+    type: "movie" | "tv";
 }

@@ -8,21 +8,26 @@ import type { IMovie } from "../../../entities/movie/model/types";
 
 type Filters = "all" | "watched" | "wantToWatch";
 
+type LibraryItems = IMovie & { type: "movie" | "tv" };
+
 const LibraryPage = () => {
     const { watched, watchlist } = useWatchlist();
-    const allTitles = [...movies, ...tvShows];
+    const allTitles = [
+        ...movies.map((item) => ({ ...item, type: "movie" as const })),
+        ...tvShows.map((item) => ({ ...item, type: "tv" as const })),
+    ];
 
-    const watchedItems = allTitles.filter((movie) =>
-        watched.includes(movie.id),
+    const watchedItems = allTitles.filter((item) =>
+        watched.includes(`${item.type}:${item.id}`),
     );
 
     const watchlistItems = allTitles.filter((movie) =>
-        watchlist.includes(movie.id),
+        watchlist.includes(`${movie.type}:${movie.id}`),
     );
 
     const [filter, setFilter] = useState<Filters>("all");
 
-    let displayedItems: IMovie[] = allTitles;
+    let displayedItems: LibraryItems[] = allTitles;
 
     switch (filter) {
         case "all":
@@ -114,6 +119,7 @@ const LibraryPage = () => {
                             title={item.title}
                             year={item.year}
                             key={item.id}
+                            type={item.type}
                         />
                     ))}
                 </Box>
