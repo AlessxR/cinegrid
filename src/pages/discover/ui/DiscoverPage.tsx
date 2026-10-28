@@ -1,20 +1,29 @@
 import { useOutletContext } from "react-router";
-import MovieGrid from "../../../widgets/movie-grid/ui/MovieGrid";
-import "./DiscoverPage.css";
+import { useEffect, useState } from "react";
 import {
     Alert,
     CircularProgress,
+    Pagination,
     ToggleButton,
     ToggleButtonGroup,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+
+import MovieGrid from "../../../widgets/movie-grid/ui/MovieGrid";
 import type { IMovie } from "../../../entities/movie/model/types";
 import { getPopularMovies } from "../../../entities/movie/api/getPopularMovies";
 import { searchMovies as searchMoviesRequest } from "../../../entities/movie/api/searchMovie";
 import { searchTv } from "../../../entities/movie/api/searchTvShows";
 import { getPopularTv } from "../../../entities/movie/api/getPopularTVShows";
 
+import "./DiscoverPage.css";
+
 type ContentType = "movies" | "tv";
+
+type PaginatedMovies = {
+    movies: IMovie[];
+    page: number;
+    totalPages: number;
+};
 
 const DiscoverPage = () => {
     const searchQuery = useOutletContext<string>();
@@ -23,6 +32,12 @@ const DiscoverPage = () => {
     const [movies, setMovies] = useState<IMovie[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState<string | null>(null);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    useEffect(() => {
+        setPage(1);
+    }, [searchQuery, contentType]);
 
     useEffect(() => {
         let isCurrent = true;
@@ -34,25 +49,30 @@ const DiscoverPage = () => {
             try {
                 const query = searchQuery.trim();
 
-                let results: IMovie[];
+                if (contentType === "tv") {
+                    const tvResults = query
+                        ? await searchTv(query)
+                        : await getPopularTv();
 
-                if (contentType === "movies") {
-                    if (query) {
-                        results = await searchMoviesRequest(query);
-                    } else {
-                        const result = await getPopularMovies();
-                        results = result.movies;
+                    if (isCurrent) {
+                        setMovies(tvResults);
+                        setTotalPages(1);
                     }
+
+                    return;
+                }
+
+                let result: PaginatedMovies;
+
+                if (query) {
+                    result = await searchMoviesRequest(query, page);
                 } else {
-                    if (query) {
-                        results = await searchTv(query);
-                    } else {
-                        results = await getPopularTv();
-                    }
+                    result = await getPopularMovies(page);
                 }
 
                 if (isCurrent) {
-                    setMovies(results);
+                    setMovies(result.movies);
+                    setTotalPages(result.totalPages);
                 }
             } catch (err) {
                 if (isCurrent) {
@@ -77,7 +97,7 @@ const DiscoverPage = () => {
             isCurrent = false;
             clearTimeout(debounce);
         };
-    }, [searchQuery, contentType]);
+    }, [searchQuery, contentType, page]);
 
     return (
         <div className="discover-page">
@@ -121,18 +141,44 @@ const DiscoverPage = () => {
                     </div>
                 </div>
 
-                {isLoading ? (
+                {isLoading && movies.length === 0 ? (
                     <div className="discover-page__loading">
                         <CircularProgress />
                     </div>
                 ) : isError ? (
                     <Alert severity="error">{isError}</Alert>
                 ) : (
-                    <MovieGrid
-                        movies={movies}
-                        contentType={contentType}
-                        searchQuery={searchQuery}
-                    />
+                    <>
+                        <MovieGrid
+                            movies={movies}
+                            contentType={contentType}
+                            searchQuery={searchQuery}
+                        />
+
+                        {isLoading && (
+                            <div className="discover-page__loading">
+                                <CircularProgress size={24} />
+                            </div>
+                        )}
+
+                        {contentType === "movies" && totalPages > 1 && (
+                            <div className="discover-page__pagination">
+                                <Pagination
+                                    count={totalPages}
+                                    page={page}
+                                    onChange={(_, value) => setPage(value)}
+                                    disabled={isLoading}
+                                    color="primary"
+                                    shape="rounded"
+                                    showFirstButton
+                                    showLastButton
+                                    siblingCount={1}
+                                    boundaryCount={1}
+                                    aria-label="Movie pages"
+                                />
+                            </div>
+                        )}
+                    </>
                 )}
             </section>
         </div>
