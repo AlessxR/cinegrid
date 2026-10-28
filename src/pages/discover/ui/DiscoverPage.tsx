@@ -13,13 +13,13 @@ import type { IMovie } from "../../../entities/movie/model/types";
 import { getPopularMovies } from "../../../entities/movie/api/getPopularMovies";
 import { searchMovies as searchMoviesRequest } from "../../../entities/movie/api/searchMovie";
 import { searchTv } from "../../../entities/movie/api/searchTvShows";
-import { getPopularTv } from "../../../entities/movie/api/getPopularTVShows";
+import { getPopularTv } from "../../../entities/movie/api/getPopularTvShows";
 
 import "./DiscoverPage.css";
 
 type ContentType = "movies" | "tv";
 
-type PaginatedMovies = {
+type PaginatedContent = {
     movies: IMovie[];
     page: number;
     totalPages: number;
@@ -42,32 +42,22 @@ const DiscoverPage = () => {
     useEffect(() => {
         let isCurrent = true;
 
-        const fetchMovies = async () => {
+        const fetchContent = async () => {
             setIsLoading(true);
             setIsError(null);
 
             try {
                 const query = searchQuery.trim();
+                let result: PaginatedContent;
 
                 if (contentType === "tv") {
-                    const tvResults = query
-                        ? await searchTv(query)
-                        : await getPopularTv();
-
-                    if (isCurrent) {
-                        setMovies(tvResults);
-                        setTotalPages(1);
-                    }
-
-                    return;
-                }
-
-                let result: PaginatedMovies;
-
-                if (query) {
-                    result = await searchMoviesRequest(query, page);
+                    result = query
+                        ? await searchTv(query, page)
+                        : await getPopularTv(page);
                 } else {
-                    result = await getPopularMovies(page);
+                    result = query
+                        ? await searchMoviesRequest(query, page)
+                        : await getPopularMovies(page);
                 }
 
                 if (isCurrent) {
@@ -79,7 +69,7 @@ const DiscoverPage = () => {
                     setIsError(
                         err instanceof Error
                             ? err.message
-                            : "Failed to load movies.",
+                            : "Failed to load content.",
                     );
                 }
             } finally {
@@ -90,7 +80,7 @@ const DiscoverPage = () => {
         };
 
         const debounce = setTimeout(() => {
-            void fetchMovies();
+            void fetchContent();
         }, 400);
 
         return () => {
@@ -161,7 +151,7 @@ const DiscoverPage = () => {
                             </div>
                         )}
 
-                        {contentType === "movies" && totalPages > 1 && (
+                        {totalPages > 1 && (
                             <div className="discover-page__pagination">
                                 <Pagination
                                     count={totalPages}
@@ -174,7 +164,11 @@ const DiscoverPage = () => {
                                     showLastButton
                                     siblingCount={1}
                                     boundaryCount={1}
-                                    aria-label="Movie pages"
+                                    aria-label={
+                                        contentType === "movies"
+                                            ? "Movie pages"
+                                            : "TV show pages"
+                                    }
                                 />
                             </div>
                         )}

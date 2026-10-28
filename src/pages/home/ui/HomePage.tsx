@@ -1,4 +1,5 @@
 import MovieGrid from "../../../widgets/movie-grid/ui/MovieGrid";
+import { movies } from "../../../entities/movie/model/mockMovies";
 
 interface HomePageProps {
     searchQuery: string;
@@ -9,7 +10,11 @@ const HomePage = ({ searchQuery }: HomePageProps) => {
         <div>
             <h1>CineGrid</h1>
             <h2>Discover your next favorite movie.</h2>
-            <MovieGrid searchQuery={searchQuery} />
+            <MovieGrid
+                searchQuery={searchQuery}
+                contentType="movies"
+                movies={movies}
+            />
         </div>
     );
 };

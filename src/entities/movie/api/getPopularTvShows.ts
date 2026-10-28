@@ -23,8 +23,20 @@ export type TmdbResponse = {
     total_results: number;
 };
 
-export const getPopularTv = async (): Promise<IMovie[]> => {
-    const popularTv = await tmdbFetch("tv/popular");
+export const getPopularTv = async (
+    page: number = 1,
+): Promise<{
+    movies: IMovie[];
+    page: number;
+    totalPages: number;
+}> => {
+    const popularTv = await tmdbFetch<TmdbResponse>("tv/popular", {
+        page,
+    });
 
-    return popularTv.results.map(mapTmdbTvShows);
+    return {
+        movies: popularTv.results.map(mapTmdbTvShows),
+        page: popularTv.page,
+        totalPages: popularTv.total_pages,
+    };
 };
