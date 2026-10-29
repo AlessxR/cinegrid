@@ -3,19 +3,27 @@ import { useEffect, useState } from "react";
 import {
     Alert,
     CircularProgress,
+    FormControl,
+    InputLabel,
+    MenuItem,
     Pagination,
+    Select,
     ToggleButton,
     ToggleButtonGroup,
 } from "@mui/material";
 
 import MovieGrid from "../../../widgets/movie-grid/ui/MovieGrid";
 import type { IMovie } from "../../../entities/movie/model/types";
-import { getPopularMovies } from "../../../entities/movie/api/getPopularMovies";
 import { searchMovies as searchMoviesRequest } from "../../../entities/movie/api/searchMovie";
 import { searchTv } from "../../../entities/movie/api/searchTvShows";
-import { getPopularTv } from "../../../entities/movie/api/getPopularTvShows";
 
 import "./DiscoverPage.css";
+import {
+    getGenres,
+    type TmdbGenre,
+} from "../../../entities/movie/api/getGenres";
+import { discoverTv } from "../../../entities/movie/api/discoverTv";
+import { discoverMovies } from "../../../entities/movie/api/discoverMovie";
 
 type ContentType = "movies" | "tv";
 
@@ -34,10 +42,12 @@ const DiscoverPage = () => {
     const [isError, setIsError] = useState<string | null>(null);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [genres, setGenres] = useState<TmdbGenre[]>([]);
+    const [selectedGenre, setSelectedGenre] = useState<number | "">("");
 
     useEffect(() => {
         setPage(1);
-    }, [searchQuery, contentType]);
+    }, [searchQuery, contentType, selectedGenre]);
 
     useEffect(() => {
         let isCurrent = true;
@@ -53,11 +63,11 @@ const DiscoverPage = () => {
                 if (contentType === "tv") {
                     result = query
                         ? await searchTv(query, page)
-                        : await getPopularTv(page);
+                        : await discoverTv(selectedGenre, page);
                 } else {
                     result = query
                         ? await searchMoviesRequest(query, page)
-                        : await getPopularMovies(page);
+                        : await discoverMovies(selectedGenre, page);
                 }
 
                 if (isCurrent) {
@@ -87,7 +97,31 @@ const DiscoverPage = () => {
             isCurrent = false;
             clearTimeout(debounce);
         };
-    }, [searchQuery, contentType, page]);
+    }, [searchQuery, contentType, page, selectedGenre]);
+
+    useEffect(() => {
+        let isCurrent = true;
+
+        const fetchGenres = async () => {
+            try {
+                const dataGenres = await getGenres(contentType);
+
+                if (isCurrent) {
+                    setGenres(dataGenres);
+                }
+            } catch (e) {
+                if (isCurrent) {
+                    console.error(e);
+                }
+            }
+        };
+
+        void fetchGenres();
+
+        return () => {
+            isCurrent = false;
+        };
+    }, [contentType]);
 
     return (
         <div className="discover-page">
@@ -130,6 +164,28 @@ const DiscoverPage = () => {
                         </p>
                     </div>
                 </div>
+                <FormControl sx={{ minWidth: 200 }} size="small">
+                    <InputLabel id="genre-select-label">Genre</InputLabel>
+
+                    <Select
+                        labelId="genre-select-label"
+                        id="genre-select"
+                        value={selectedGenre}
+                        label="Genre"
+                        onChange={(event) => {
+                            const value = event.target.value;
+                            setSelectedGenre(value === "" ? "" : Number(value));
+                        }}
+                    >
+                        <MenuItem value="">All genres</MenuItem>
+
+                        {genres.map((genre) => (
+                            <MenuItem key={genre.id} value={genre.id}>
+                                {genre.name}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
 
                 {isLoading && movies.length === 0 ? (
                     <div className="discover-page__loading">
