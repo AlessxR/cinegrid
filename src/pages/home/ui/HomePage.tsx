@@ -1,11 +1,10 @@
+import { useOutletContext } from "react-router";
 import MovieGrid from "../../../widgets/movie-grid/ui/MovieGrid";
 import { movies } from "../../../entities/movie/model/mockMovies";
 
-interface HomePageProps {
-    searchQuery: string;
-}
+const HomePage = () => {
+    const searchQuery = useOutletContext<string>();
 
-const HomePage = ({ searchQuery }: HomePageProps) => {
     return (
         <div>
             <h1>CineGrid</h1>

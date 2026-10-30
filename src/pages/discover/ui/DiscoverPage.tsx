@@ -10,6 +10,7 @@ import {
     Select,
     ToggleButton,
     ToggleButtonGroup,
+    type SelectChangeEvent,
 } from "@mui/material";
 
 import MovieGrid from "../../../widgets/movie-grid/ui/MovieGrid";
@@ -44,10 +45,6 @@ const DiscoverPage = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [genres, setGenres] = useState<TmdbGenre[]>([]);
     const [selectedGenre, setSelectedGenre] = useState<number | "">("");
-
-    useEffect(() => {
-        setPage(1);
-    }, [searchQuery, contentType, selectedGenre]);
 
     useEffect(() => {
         let isCurrent = true;
@@ -123,6 +120,12 @@ const DiscoverPage = () => {
         };
     }, [contentType]);
 
+    const handleGenreChange = (event: SelectChangeEvent<number | "">) => {
+        const value = event.target.value;
+        setSelectedGenre(value === "" ? "" : Number(value));
+        setPage(1);
+    };
+
     return (
         <div className="discover-page">
             <div className="discover-page__heading">
@@ -139,6 +142,7 @@ const DiscoverPage = () => {
                         onChange={(_, newValue: ContentType | null) => {
                             if (newValue !== null) {
                                 setContentType(newValue);
+                                setPage(1);
                             }
                         }}
                         aria-label="Content type"
@@ -172,10 +176,7 @@ const DiscoverPage = () => {
                         id="genre-select"
                         value={selectedGenre}
                         label="Genre"
-                        onChange={(event) => {
-                            const value = event.target.value;
-                            setSelectedGenre(value === "" ? "" : Number(value));
-                        }}
+                        onChange={handleGenreChange}
                     >
                         <MenuItem value="">All genres</MenuItem>
 
