@@ -1,33 +1,14 @@
 import {
-    createContext,
     useState,
     type ReactNode,
-    type Dispatch,
-    type SetStateAction,
-    useContext,
     useEffect,
 } from "react";
+import { WatchlistContext } from "./WatchlistContext";
 import type { ISavedMedia } from "../../../entities/movie/model/types";
 
 interface WatchlistProviderProps {
     children: ReactNode;
 }
-
-interface WatchlistContextType {
-    watchlist: ISavedMedia[];
-    setWatchlist: Dispatch<SetStateAction<ISavedMedia[]>>;
-
-    watched: ISavedMedia[];
-    setWatched: Dispatch<SetStateAction<ISavedMedia[]>>;
-}
-
-const WatchlistContext = createContext<WatchlistContextType>({
-    watchlist: [],
-    setWatchlist: () => {},
-
-    watched: [],
-    setWatched: () => {},
-});
 
 const isSavedMediaArray = (value: unknown): value is ISavedMedia[] => {
     if (!Array.isArray(value)) {
@@ -102,7 +83,5 @@ const WatchlistProvider = ({ children }: WatchlistProviderProps) => {
         </WatchlistContext.Provider>
     );
 };
-
-export const useWatchlist = () => useContext(WatchlistContext);
 
 export default WatchlistProvider;

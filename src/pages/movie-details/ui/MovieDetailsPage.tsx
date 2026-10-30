@@ -5,7 +5,7 @@ import {
     type MovieDetails,
 } from "../../../entities/movie/api/getMovieDetails";
 import { Alert, CircularProgress } from "@mui/material";
-import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
+import { useWatchlist } from "../../../app/providers/watchlist/WatchlistContext";
 import type { MediaHeroData } from "../../../entities/media/model/types";
 import MediaHero from "../../../entities/media/ui/MediaHero";
 import type { ISavedMedia } from "../../../entities/movie/model/types";

@@ -15,7 +15,7 @@ interface MovieGridProps {
 
 const MovieGrid = ({ searchQuery, contentType, movies }: MovieGridProps) => {
     const [sortOption, setSortOption] = useState<SortOption>("popular");
-    let sortMovies: IMovie[] = [];
+    let sortMovies: IMovie[];
 
     const currentItems = movies;
 

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./MovieCard.css";
-import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
+import { useWatchlist } from "../../../app/providers/watchlist/WatchlistContext";
 import { Button, Stack } from "@mui/material";
 import { useNavigate } from "react-router";
 import type { ISavedMedia } from "../model/types";

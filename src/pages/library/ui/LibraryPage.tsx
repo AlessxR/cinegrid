@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useWatchlist } from "../../../app/providers/watchlist/WatchlistProvider";
+import { useWatchlist } from "../../../app/providers/watchlist/WatchlistContext";
 import "./LibraryPage.css";
 import MovieCard from "../../../entities/movie/ui/MovieCard";
 import { useState } from "react";
